@@ -1,0 +1,12 @@
+/node_modules/
+/.idea/
+*.js.map
+*.map
+*.js
+dist
+tsconfig.tsbuildinfo
+.env
+package-lock.json
+yarn.lock
+yarn-*.log
+.vscode
