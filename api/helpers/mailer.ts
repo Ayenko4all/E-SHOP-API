@@ -1,5 +1,7 @@
 import nodemailer from "nodemailer";
 import { IUser } from "../models/userModel";
+import dotenv from "dotenv";
+dotenv.config();
 
 //Sending email sample with Gmail
 const transporter = nodemailer.createTransport({
@@ -8,15 +10,15 @@ const transporter = nodemailer.createTransport({
   port: 465,
   secure: true,
   auth: {
-    user: "tutorialayenko@gmail.com",
-    pass: "crxr esnf wuwr lojy",
+    user: process.env.MAILER_USER,
+    pass: process.env.MAILER_PASSWORD,
   },
 });
 
 const sendWelcomeNotification = (user: IUser) => {
   transporter.sendMail({
     to: user.email,
-    from: "tutorialayenko@gmail.com",
+    from: process.env.MAILER_FROM,
     subject: "Welcome Notification",
     html: `
         <p>We are thrilled to welcome you to School Link Application</p>
@@ -28,7 +30,7 @@ const sendWelcomeNotification = (user: IUser) => {
 const sendResetPasswordNotification = (email: string, token: any) => {
   transporter.sendMail({
     to: email,
-    from: "tutorialayenko@gmail.com",
+    from: process.env.MAILER_FROM,
     subject: "Reset Password Notification",
     html: `
           <p>You are receiving this email because we received a password reset request for your account</p>
@@ -41,7 +43,7 @@ const sendResetPasswordNotification = (email: string, token: any) => {
 const sendVerificationNotification = (email: string, token: any) => {
   transporter.sendMail({
     to: email,
-    from: "tutorialayenko@gmail.com",
+    from: process.env.MAILER_FROM,
     subject: "Verification Notification",
     html: `
           <p>You are receiving this email because we received a verification request for your account</p>
