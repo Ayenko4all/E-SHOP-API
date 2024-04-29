@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { IUser } from "../models/userModel";
+import { IUser, User } from "../models/userModel";
 import { Token } from "../models/tokenModel";
 import {
   sendResetPasswordNotification,
@@ -51,12 +51,6 @@ export const generateVerificationToken = async (
 
 export const generateAccessToken = async (user: IUser): Promise<string> => {
   const secret: any = process.env.JWT_KEY;
-  const token = jwt.sign(
-    { email: user.email, password: user.password },
-    secret,
-    {
-      expiresIn: "1h",
-    }
-  );
+  const token = jwt.sign({ user }, secret, { expiresIn: "1h" });
   return token;
 };

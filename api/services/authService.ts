@@ -1,14 +1,13 @@
 import { Request, Response } from "express";
 import { hash, compare } from "bcrypt";
-import apiResponse from "../controllers/apiController";
+import api from "../controllers/apiController";
 import UserRepository from "../Respositories/userRespository";
 import { StatusCode } from "../helpers/statusCode";
 import {
   generateVerificationToken,
   generateAccessToken,
 } from "../helpers/tokenHelper";
-import { IToken, Token } from "../models/tokenModel";
-import { IRole, Role } from "../models/roleModel";
+import { Token } from "../models/tokenModel";
 import { sendWelcomeNotification } from "../helpers/mailer";
 import { defaultRoles } from "../helpers/defaultRole";
 import RoleRepository from "../Respositories/roleRespository";
@@ -21,10 +20,10 @@ class AuthService {
       let user = await UserRepository.findByEmailOrPhone(req.body.email);
 
       if (user) {
-        return apiResponse.respondWithError(
+        return api.respondWithError(
           res,
           "The email already exist.",
-          422
+          StatusCode.UNPROCCESSED_ENTITY
         );
       }
 
@@ -56,10 +55,10 @@ class AuthService {
       const message =
         "Registration successfully. Please check your email for a verification token";
 
-      return apiResponse.respondCreated(res, user, message);
+      return api.respondCreated(res, user, message);
     } catch (error: any) {
       console.log(error);
-      return apiResponse.respondWithError(res, error.message);
+      return api.respondWithError(res, error.message);
     }
   }
 
@@ -71,7 +70,7 @@ class AuthService {
       let user = await UserRepository.findByEmailOrPhone(email);
 
       if (!user) {
-        return apiResponse.respondWithError(
+        return api.respondWithError(
           res,
           "Invalid credentials.",
           StatusCode.UNPROCCESSED_ENTITY
@@ -79,7 +78,7 @@ class AuthService {
       }
 
       if (!user.email_verified_at) {
-        return apiResponse.respondWithError(
+        return api.respondWithError(
           res,
           "Please verify your email address.",
           StatusCode.UNPROCCESSED_ENTITY
@@ -94,7 +93,7 @@ class AuthService {
       const checkPassword = await compare(password, user.password);
 
       if (!checkPassword) {
-        return apiResponse.respondWithError(
+        return api.respondWithError(
           res,
           "Invalid credentials.",
           StatusCode.UNPROCCESSED_ENTITY
@@ -103,17 +102,16 @@ class AuthService {
 
       const token = await generateAccessToken(user);
 
-      return apiResponse.respondCreated(
+      const userRoles = await user.populate("roles", "name");
+
+      return api.respondCreated(
         res,
-        {
-          user: user,
-          token: token,
-        },
+        { roles: userRoles.roles, token: token },
         "Access token created successfully."
       );
     } catch (error: any) {
       console.log(error);
-      return apiResponse.respondWithError(res, error.message);
+      return api.respondWithError(res, error.message);
     }
   }
 
@@ -129,7 +127,7 @@ class AuthService {
       let user = await UserRepository.findByEmailOrPhone(requestValue);
 
       if (!user) {
-        return apiResponse.respondWithError(
+        return api.respondWithError(
           res,
           "Invalid email or telephone provided.",
           StatusCode.UNPROCCESSED_ENTITY
@@ -138,9 +136,9 @@ class AuthService {
 
       await generateVerificationToken(requestValue, type, reason);
 
-      return apiResponse.respondOk(res, "Token sent to your registered email.");
+      return api.respondOk(res, "Token sent to your registered email.");
     } catch (error: any) {
-      return apiResponse.respondWithError(res, error.message);
+      return api.respondWithError(res, error.message);
     }
   }
 
@@ -157,7 +155,7 @@ class AuthService {
         .exec();
 
       if (await checkTokenExpiration(token)) {
-        return apiResponse.respondWithError(
+        return api.respondWithError(
           res,
           "Verifcation token is invalid or has expired. Please request another one.",
           StatusCode.UNPROCCESSED_ENTITY
@@ -173,12 +171,9 @@ class AuthService {
 
       await Token.findByIdAndDelete(token._id);
 
-      return apiResponse.respondOk(
-        res,
-        "Your password was updated successfully."
-      );
+      return api.respondOk(res, "Your password was updated successfully.");
     } catch (error: any) {
-      return apiResponse.respondWithError(res, error.message);
+      return api.respondWithError(res, error.message);
     }
   }
 
@@ -194,7 +189,7 @@ class AuthService {
       let user = await UserRepository.findByEmailOrPhone(requestValue);
 
       if (!user) {
-        return apiResponse.respondWithError(
+        return api.respondWithError(
           res,
           "Invalid email or telephone provided.",
           StatusCode.UNPROCCESSED_ENTITY
@@ -203,12 +198,12 @@ class AuthService {
 
       await generateVerificationToken(requestValue, type, reason);
 
-      return apiResponse.respondOk(
+      return api.respondOk(
         res,
         `Verification token sent to your registered ${requestValue}.`
       );
     } catch (error: any) {
-      return apiResponse.respondWithError(res, error.message);
+      return api.respondWithError(res, error.message);
     }
   }
 
@@ -225,7 +220,7 @@ class AuthService {
       });
 
       if (await checkTokenExpiration(token)) {
-        return apiResponse.respondWithError(
+        return api.respondWithError(
           res,
           "Verifcation token is invalid or has expired. Please request another one.",
           StatusCode.UNPROCCESSED_ENTITY
@@ -246,9 +241,9 @@ class AuthService {
 
       await Token.findByIdAndDelete(token._id);
 
-      return apiResponse.respondOk(res, "Token verifed successfully.");
+      return api.respondOk(res, "Token verifed successfully.");
     } catch (error: any) {
-      return apiResponse.respondWithError(res, error.message);
+      return api.respondWithError(res, error.message);
     }
   }
 }
