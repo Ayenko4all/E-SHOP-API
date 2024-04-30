@@ -1,12 +1,17 @@
 import { Router } from "express";
-import authMiddleware from "../middlewares/authMiddleware";
+import authGaurd from "../middlewares/auth";
+import adminGaurd from "../middlewares/admin";
 
 const app = Router();
 
-import UserRoutes from "./user";
-import AuthRoutes from "./auth";
+import authRoutes from "./auth";
+import adminRoutes from "./admin";
+import userRoutes from "./user";
 
-app.use("/user", authMiddleware, UserRoutes);
-app.use("/auth", AuthRoutes);
+const isAdmin = [authGaurd, adminGaurd]; //ADMIN MIDDLEWARE
+
+app.use("/user", authGaurd, userRoutes);
+app.use("/admin", authGaurd, adminGaurd, adminRoutes);
+app.use("/auth", authRoutes);
 
 export default app;

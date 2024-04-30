@@ -2,6 +2,7 @@ import { Schema, model } from "mongoose";
 import { IRole } from "./roleModel";
 
 export interface IUser {
+  _id: Schema.Types.ObjectId;
   first_name: string;
   last_name: string;
   email: string;

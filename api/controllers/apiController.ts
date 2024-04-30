@@ -10,11 +10,7 @@ class ApiController {
     });
   };
 
-  respondCreated = (
-    res: Response,
-    data: any,
-    message: string | null
-  ): Response => {
+  created = (res: Response, data: any, message: string | null): Response => {
     return res.status(StatusCode.CREATED).json({
       status: "success",
       message: message,
@@ -22,14 +18,14 @@ class ApiController {
     });
   };
 
-  respondOk = (res: Response, message: string): Response => {
-    return res.status(StatusCode.CREATED).json({
+  Ok = (res: Response, message: string): Response => {
+    return res.status(StatusCode.OK).json({
       status: "success",
       message: message,
     });
   };
 
-  respondWithError = (
+  error = (
     res: Response,
     error: string,
     status: number = StatusCode.SERVICE_ERROR

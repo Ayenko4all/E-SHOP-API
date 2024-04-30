@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { StatusCode } from "../helpers/statusCode";
-import apiResponse from "../controllers/apiController";
+import response from "../controllers/apiController";
 import { IUser, User } from "../models/userModel";
 
 const { verify } = jwt;
@@ -16,13 +16,9 @@ export default async (req: any, res: any, next: any) => {
       "roles",
       "name"
     )) as IUser;
-    req.body = { user: user };
+    req.user = user;
     next();
   } catch (err) {
-    apiResponse.respondWithError(
-      res,
-      "Unauthenticated.",
-      StatusCode.UNAUTHORIZED
-    );
+    response.error(res, "Unauthenticated.", StatusCode.UNAUTHORIZED);
   }
 };

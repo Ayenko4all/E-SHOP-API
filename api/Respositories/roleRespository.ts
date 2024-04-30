@@ -14,7 +14,7 @@ class RoleRepository {
     return await Role.findOne({ name: param }).select("_id").exec();
   };
 
-  updateUser = async (condition: object, data: object) => {
+  updateRole = async (condition: object, data: object) => {
     return await Role.findOneAndUpdate(condition, data, { new: true }).exec();
   };
 }

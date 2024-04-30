@@ -20,7 +20,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use(bodyParser.json());
 
-app.use("/", routes);
+app.use("/v1", routes);
 
 app.use((req: Request, res: Response, next: NextFunction) => {
   const error: any = new Error("Route Not Found");
@@ -36,7 +36,7 @@ app.use((error: any, req: Request, res: Response, next: NextFunction) => {
   });
 });
 
-app.use("/", (req: Request, res: Response, next: NextFunction) => {
+app.use("/v1", (req: Request, res: Response, next: NextFunction) => {
   res.status(200).json({ message: "Welcome to typescript and Node js Api" });
 });
 
