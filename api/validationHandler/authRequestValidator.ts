@@ -3,7 +3,7 @@ import userRespository from "../Respositories/userRespository";
 import { Token } from "../models/tokenModel";
 import { checkTokenExpiration } from "../helpers/checkIfTokenHasExpires";
 
-export const loginError = [
+export const loginValidator = [
   body("email")
     .isEmail()
     .withMessage("Please enter a valid email address.")
@@ -14,7 +14,7 @@ export const loginError = [
     .withMessage("Password length not should be less than 8 characters."),
 ];
 
-export const registerError = [
+export const registerValidator = [
   body("first_name", "Please enter first name").notEmpty().isString(),
   body("last_name", "Please enter last name").notEmpty().isString(),
   body("telephone", "Please enter last name").optional().isString(),
@@ -41,7 +41,7 @@ export const registerError = [
     .withMessage("Password length not should be less than 8 characters."),
 ];
 
-export const tokenRequestError = [
+export const tokenRequestValidator = [
   body("email", "Please enter a valid email address.")
     .notEmpty()
     .isEmail()
@@ -55,7 +55,7 @@ export const tokenRequestError = [
   check("type", "Please enter a valid type."),
 ];
 
-export const resetPasswordError = [
+export const resetPasswordValidator = [
   body("email")
     .isEmail()
     .withMessage("Please enter a valid email address.")
@@ -79,7 +79,7 @@ export const resetPasswordError = [
     }),
 ];
 
-export const verificationError = [
+export const verificationValidator = [
   body("email")
     .isEmail()
     .withMessage("Please enter a valid email address.")

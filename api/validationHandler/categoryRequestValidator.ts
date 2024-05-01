@@ -1,6 +1,6 @@
 import { body, check } from "express-validator";
 
-export const createError = [
+export const createValidator = [
   body("name")
     .isString()
     .isLength({ min: 3 })
