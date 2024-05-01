@@ -3,6 +3,7 @@ import { Schema, model, Model } from "mongoose";
 import { IUser } from "./userModel";
 
 export interface ICategory {
+  _id: Schema.Types.ObjectId;
   name: string;
   description?: string;
   parent?: ICategory;

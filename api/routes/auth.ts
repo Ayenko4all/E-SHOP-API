@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import authController from "../controllers/authController";
+import authController from "../controllers/user/authController";
 import {
   loginValidator,
   tokenRequestValidator,
