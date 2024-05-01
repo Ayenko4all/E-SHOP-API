@@ -1,7 +1,7 @@
 import { Router } from "express";
 import categoryController from "../controllers/admin/categoryController";
 const router = Router();
-import { createError } from "../errorHandler/categoryRequestError";
+import { createError } from "../validationHandler/categoryRequestValidator";
 
 router.get("/categories", categoryController.index);
 router.post("/categories", createError, categoryController.store);

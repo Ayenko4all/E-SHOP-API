@@ -7,7 +7,7 @@ import {
   registerError,
   resetPasswordError,
   verificationError,
-} from "../errorHandler/authRequestError";
+} from "../validationHandler/authRequestValidator";
 
 const router = Router();
 
