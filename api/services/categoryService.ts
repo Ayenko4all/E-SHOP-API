@@ -3,6 +3,8 @@ import response from "../controllers/apiController";
 import { IUser } from "../models/userModel";
 import categoryRespository from "../Respositories/categoryRespository";
 import { ICategory } from "../models/categoryModel";
+import { validationResult } from "express-validator";
+import { StatusCode } from "../helpers/statusCode";
 
 class categoryService {
   public async createCategory(
@@ -10,6 +12,16 @@ class categoryService {
     res: Response
   ): Promise<Response> {
     try {
+      const errors = validationResult(req);
+
+      if (!errors.isEmpty()) {
+        return response.error(
+          res,
+          errors.array()[0].msg,
+          StatusCode.UNPROCCESSED_ENTITY
+        );
+      }
+
       const user: IUser = req.user;
 
       const catRequest = {
@@ -72,6 +84,16 @@ class categoryService {
 
   public async updateCategory(req: Request, res: Response): Promise<Response> {
     try {
+      const errors = validationResult(req);
+
+      if (!errors.isEmpty()) {
+        return response.error(
+          res,
+          errors.array()[0].msg,
+          StatusCode.UNPROCCESSED_ENTITY
+        );
+      }
+
       const catId: string = req.body.category_id;
       const reqStatus: Boolean = req.body.status;
       const name: string = req.body.name;

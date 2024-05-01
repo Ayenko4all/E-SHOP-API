@@ -1,14 +1,33 @@
 import { Router } from "express";
 
-import AuthController from "../controllers/authController";
+import authController from "../controllers/authController";
+import {
+  loginError,
+  tokenRequestError,
+  registerError,
+  resetPasswordError,
+  verificationError,
+} from "../errorHandler/authRequestError";
 
 const router = Router();
 
-router.post("/register", AuthController.register);
-router.post("/login", AuthController.login);
-router.post("/forgotPassword", AuthController.forgotPassword);
-router.post("/resetPassord", AuthController.resetPassword);
-router.post("/requestToken", AuthController.requestVerificationToken);
-router.post("/verifyToken", AuthController.tokenVerification);
+router.post("/register", registerError, authController.register);
+router.post("/login", loginError, authController.login);
+router.post(
+  "/forgotPassword",
+  tokenRequestError,
+  authController.forgotPassword
+);
+router.post("/resetPassord", resetPasswordError, authController.resetPassword);
+router.post(
+  "/requestToken",
+  tokenRequestError,
+  authController.requestVerificationToken
+);
+router.post(
+  "/verifyToken",
+  verificationError,
+  authController.tokenVerification
+);
 
 export default router;

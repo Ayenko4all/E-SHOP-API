@@ -13,19 +13,22 @@ import { defaultRoles } from "../helpers/defaultRole";
 import RoleRepository from "../Respositories/roleRespository";
 import moment from "moment";
 import { checkTokenExpiration } from "../helpers/checkIfTokenHasExpires";
+import { validationResult } from "express-validator";
 
 class AuthService {
   public async createUser(req: Request, res: Response) {
     try {
-      let user = await UserRepository.findByEmailOrPhone(req.body.email);
+      const errors = validationResult(req);
 
-      if (user) {
+      if (!errors.isEmpty()) {
         return response.error(
           res,
-          "The email already exist.",
+          errors.array()[0].msg,
           StatusCode.UNPROCCESSED_ENTITY
         );
       }
+
+      let user = await UserRepository.findByEmailOrPhone(req.body.email);
 
       const hashPassword = await hash(req.body.password, 10);
 
@@ -67,6 +70,16 @@ class AuthService {
     const email = req.body.email;
 
     try {
+      const errors = validationResult(req);
+
+      if (!errors.isEmpty()) {
+        return response.error(
+          res,
+          errors.array()[0].msg,
+          StatusCode.UNPROCCESSED_ENTITY
+        );
+      }
+
       let user = await UserRepository.findByEmailOrPhone(email);
 
       if (!user) {
@@ -117,6 +130,16 @@ class AuthService {
 
   public async forgotPassword(req: Request, res: Response) {
     try {
+      const errors = validationResult(req);
+
+      if (!errors.isEmpty()) {
+        return response.error(
+          res,
+          errors.array()[0].msg,
+          StatusCode.UNPROCCESSED_ENTITY
+        );
+      }
+
       const email = req.body.email;
       const telephone = req.body.telephone;
       const type = req.body.type;
@@ -144,6 +167,16 @@ class AuthService {
 
   public async resetPassword(req: Request, res: Response) {
     try {
+      const errors = validationResult(req);
+
+      if (!errors.isEmpty()) {
+        return response.error(
+          res,
+          errors.array()[0].msg,
+          StatusCode.UNPROCCESSED_ENTITY
+        );
+      }
+
       const email = req.body.email;
       const telephone = req.body.telephone;
       let token = req.body.token;
@@ -153,14 +186,6 @@ class AuthService {
           $or: [{ telephone: telephone }, { email: email }],
         })
         .exec();
-
-      if (await checkTokenExpiration(token)) {
-        return response.error(
-          res,
-          "Verifcation token is invalid or has expired. Please request another one.",
-          StatusCode.UNPROCCESSED_ENTITY
-        );
-      }
 
       const hashPassword = await hash(req.body.password, 10);
 
@@ -179,6 +204,16 @@ class AuthService {
 
   public async requestVerificationToken(req: Request, res: Response) {
     try {
+      const errors = validationResult(req);
+
+      if (!errors.isEmpty()) {
+        return response.error(
+          res,
+          errors.array()[0].msg,
+          StatusCode.UNPROCCESSED_ENTITY
+        );
+      }
+
       const email = req.body.email;
       const telephone = req.body.telephone;
       const type = req.body.type;
@@ -208,9 +243,20 @@ class AuthService {
   }
 
   public async tokenVerification(req: Request, res: Response) {
-    let condition;
-    let data;
     try {
+      const errors = validationResult(req);
+
+      if (!errors.isEmpty()) {
+        return response.error(
+          res,
+          errors.array()[0].msg,
+          StatusCode.UNPROCCESSED_ENTITY
+        );
+      }
+
+      let condition;
+      let data;
+
       const email = req.body.email;
       const telephone = req.body.telephone;
       let token = req.body.token;
@@ -218,14 +264,6 @@ class AuthService {
       token = await Token.findOne({ token: token }).where({
         $or: [{ telephone: telephone }, { email: email }],
       });
-
-      if (await checkTokenExpiration(token)) {
-        return response.error(
-          res,
-          "Verifcation token is invalid or has expired. Please request another one.",
-          StatusCode.UNPROCCESSED_ENTITY
-        );
-      }
 
       const currentTime = moment();
 
