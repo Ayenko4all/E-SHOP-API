@@ -2,16 +2,18 @@ import { Request, Response } from "express";
 import response from "../controllers/apiController";
 import { IUser } from "../models/userModel";
 import productRespository from "../Respositories/productRespository";
-import { IProduct } from "../models/productModel";
+import { IProduct, Product } from "../models/productModel";
 import { validationResult } from "express-validator";
 import { StatusCode } from "../helpers/statusCode";
 
 class ProductService {
   public async fetchProducts(req: Request, res: Response): Promise<Response> {
     try {
+      const products = await productRespository.findProducts();
+
       return response.respond(
         res,
-        { products: {} },
+        { products: products },
         "Products fetch successfully."
       );
     } catch (error: any) {
@@ -20,7 +22,10 @@ class ProductService {
     }
   }
 
-  public async createProduct(req: Request, res: Response): Promise<Response> {
+  public async createProduct(
+    req: Request | any,
+    res: Response
+  ): Promise<Response> {
     try {
       const errors = validationResult(req);
 
@@ -32,7 +37,23 @@ class ProductService {
         );
       }
 
-      return response.created(res, { category: {} }, "Product was created.");
+      const user: IUser = req.user;
+
+      const productRequest = {
+        name: req.body.name,
+        price: req.body.price,
+        selling_price: req.body.selling_price,
+        quantity: req.body.quantity,
+        category: req.body.category,
+        creator: user._id,
+      };
+
+      const product = await productRespository.create(productRequest);
+      return response.created(
+        res,
+        { product: product },
+        "Product was created."
+      );
     } catch (error: any) {
       console.log(error);
       return response.error(res, error.message);

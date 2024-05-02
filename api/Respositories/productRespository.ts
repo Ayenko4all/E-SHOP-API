@@ -9,6 +9,7 @@ class ProductRespository {
 
   findProducts = async () => {
     return await Product.find().exec();
+    //return await Product.paginate({ limit: 2 });
   };
 
   findProduct = async (param: string) => {

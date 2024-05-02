@@ -7,25 +7,18 @@ export interface IProduct {
   name: string;
   description?: string;
   category: ICategory;
-  creator?: IUser;
+  creator: IUser;
   status: boolean;
   price: number;
-  image: string;
-  is_available: boolean;
+  selling_price: number;
   quantity: number;
-  type: string;
-  size: number;
-  color: string;
 }
 
-const ProductSchema = new Schema<IProduct>(
+const MongoPaging = require("mongo-cursor-pagination");
+
+const ProductSchema = new Schema(
   {
     name: {
-      type: String,
-      required: true,
-    },
-
-    image: {
       type: String,
       required: true,
     },
@@ -38,7 +31,7 @@ const ProductSchema = new Schema<IProduct>(
     category: {
       type: Schema.Types.ObjectId,
       ref: "category",
-      default: null,
+      required: true,
     },
 
     description: {
@@ -47,6 +40,12 @@ const ProductSchema = new Schema<IProduct>(
     },
 
     price: {
+      type: Number,
+      default: 0,
+      required: true,
+    },
+
+    selling_price: {
       type: Number,
       default: 0,
       required: true,
@@ -66,6 +65,8 @@ const ProductSchema = new Schema<IProduct>(
   },
   { timestamps: true }
 );
+
+ProductSchema.plugin(MongoPaging.mongoosePlugin);
 
 export const Product: Model<IProduct> = model<IProduct>(
   "Product",

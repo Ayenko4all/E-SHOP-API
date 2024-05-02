@@ -12,7 +12,7 @@ const roleSchema = new Schema<IRole>(
   {
     name: {
       type: String,
-      required: [true, "Title should not be empty!"],
+      required: true,
     },
 
     description: {

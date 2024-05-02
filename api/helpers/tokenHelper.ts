@@ -6,6 +6,7 @@ import {
   sendVerificationNotification,
 } from "./mailer";
 import moment from "moment";
+import { AccessToken, IAccessToken } from "../models/accessTokeen";
 
 export const generateVerificationToken = async (
   param: string,
@@ -50,7 +51,30 @@ export const generateVerificationToken = async (
 };
 
 export const generateAccessToken = async (user: IUser): Promise<string> => {
+  deleteAccessToken(user);
   const secret: any = process.env.JWT_KEY;
   const token = jwt.sign({ user }, secret, { expiresIn: "1h" });
+  storeAccessToken(token, user);
   return token;
+};
+
+export const storeAccessToken = async (token: string, user: IUser) => {
+  const accessToken = await AccessToken.create({
+    token: token,
+    user: user._id,
+  });
+  console.log(accessToken);
+};
+
+export const deleteAccessToken = async (user: IUser) => {
+  await AccessToken.deleteOne({ user: user._id });
+};
+
+export const verifyToken = async (
+  user: IUser,
+  token: string
+): Promise<IAccessToken | null> => {
+  return await AccessToken.findOne({ user: user._id, token: token })
+    .lean<IAccessToken>()
+    .exec();
 };
