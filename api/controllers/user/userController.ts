@@ -1,9 +1,9 @@
-import { Request, Response, NextFunction } from "express";
-import userService from "../../services/userService";
+import { Request, Response } from 'express';
+import userService from '../../services/userService';
 class UserController {
-  fetchUser = async (req: Request, res: Response) => {
-    userService.fetchUser(req, res);
-  };
+  async fetchUser(req: Request, res: Response) {
+    return userService.fetchUser(req, res);
+  }
 }
 
 export default new UserController();

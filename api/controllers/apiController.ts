@@ -1,18 +1,29 @@
-import { Request, Response, NextFunction } from "express";
-import { StatusCode } from "../helpers/statusCode";
+import { Request, Response, NextFunction } from 'express';
+import { StatusCode } from '../helpers/statusCode';
 
 class ApiController {
   respond = (res: Response, data: any, message?: string): Response => {
     return res.status(StatusCode.OK).json({
-      status: "success",
+      status: 'success',
       message: message,
       data: data,
+    });
+  };
+  paginatedResponse = (
+    res: Response,
+    data: any,
+    message?: string
+  ): Response => {
+    return res.status(StatusCode.OK).json({
+      status: 'success',
+      message: message,
+      ...data,
     });
   };
 
   created = (res: Response, data: any, message: string | null): Response => {
     return res.status(StatusCode.CREATED).json({
-      status: "success",
+      status: 'success',
       message: message,
       data: data,
     });
@@ -20,7 +31,7 @@ class ApiController {
 
   Ok = (res: Response, message: string): Response => {
     return res.status(StatusCode.OK).json({
-      status: "success",
+      status: 'success',
       message: message,
     });
   };
@@ -31,7 +42,7 @@ class ApiController {
     status: number = StatusCode.SERVICE_ERROR
   ) => {
     return res.status(status).json({
-      status: "fail",
+      status: 'fail',
       error: {
         message: error,
       },

@@ -1,14 +1,14 @@
-import { Request, Response, NextFunction } from "express";
-import productService from "../../services/productService";
+import { Request, Response, NextFunction } from 'express';
+import productService from '../../services/productService';
 
 class ProductController {
-  index = async (req: Request, res: Response) => {
-    productService.fetchProducts(req, res);
-  };
+  async getProducts(req: Request, res: Response): Promise<any> {
+    return productService.fetchProducts(req, res);
+  }
 
-  store = async (req: Request, res: Response) => {
-    productService.createProduct(req, res);
-  };
+  async store(req: Request, res: Response) {
+    return productService.createProduct(req, res);
+  }
 
   show = async (req: Request, res: Response) => {
     productService.fetchProduct(req, res);

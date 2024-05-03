@@ -11,7 +11,7 @@ router.get("/categories/:category", categoryController.show);
 router.patch("/categories", categoryController.update);
 router.delete("/categories/:category", categoryController.destroy);
 
-router.get("/products", productController.index);
+router.get("/products", productController.getProducts);
 router.post("/products", createProductValidator, productController.store);
 router.get("/products/:product", productController.show);
 router.patch("/products", productController.update);

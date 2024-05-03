@@ -1,21 +1,18 @@
-import { Request, Response } from "express";
-import response from "../controllers/apiController";
-import { IUser } from "../models/userModel";
-import productRespository from "../Respositories/productRespository";
-import { IProduct, Product } from "../models/productModel";
-import { validationResult } from "express-validator";
-import { StatusCode } from "../helpers/statusCode";
+import { Request, Response } from 'express';
+import response from '../controllers/apiController';
+import { IUser } from '../models/userModel';
+import productRespository from '../Respositories/productRespository';
+import { IProduct, Product } from '../models/productModel';
+import { validationResult } from 'express-validator';
+import { StatusCode } from '../helpers/statusCode';
 
 class ProductService {
   public async fetchProducts(req: Request, res: Response): Promise<Response> {
     try {
       const products = await productRespository.findProducts();
 
-      return response.respond(
-        res,
-        { products: products },
-        "Products fetch successfully."
-      );
+      // NOTE: how I pass the response without formating it again
+      return response.respond(res, products, 'Products fetch successfully.');
     } catch (error: any) {
       console.log(error);
       return response.error(res, error.message);
@@ -52,7 +49,7 @@ class ProductService {
       return response.created(
         res,
         { product: product },
-        "Product was created."
+        'Product was created.'
       );
     } catch (error: any) {
       console.log(error);
@@ -65,7 +62,7 @@ class ProductService {
       return response.respond(
         res,
         { product: {} },
-        "Product fetch successfully."
+        'Product fetch successfully.'
       );
     } catch (error: any) {
       console.log(error);
@@ -78,7 +75,7 @@ class ProductService {
       return response.respond(
         res,
         { products: {} },
-        "Product updated successfully."
+        'Product updated successfully.'
       );
     } catch (error: any) {
       console.log(error);
@@ -88,7 +85,7 @@ class ProductService {
 
   public async deleteProduct(req: Request, res: Response): Promise<Response> {
     try {
-      return response.Ok(res, "Products deleted successfully.");
+      return response.Ok(res, 'Products deleted successfully.');
     } catch (error: any) {
       console.log(error);
       return response.error(res, error.message);

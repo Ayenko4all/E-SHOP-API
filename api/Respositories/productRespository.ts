@@ -1,16 +1,34 @@
-import { Request, Response, NextFunction } from "express";
-import { Category } from "../models/categoryModel";
-import { Product } from "../models/productModel";
+import { Category } from '../models/categoryModel';
+import { Product } from '../models/productModel';
 
 class ProductRespository {
   create = async (product: object) => {
     return await Product.create(product);
   };
 
-  findProducts = async () => {
-    return await Product.find().exec();
-    //return await Product.paginate({ limit: 2 });
-  };
+  async findProducts() {
+    const res = await (Product as any).paginate({
+      limit: 1,
+    });
+
+    if (res?.results) {
+      const { results: products, ...others } = res;
+
+      return {
+        products,
+        ...others,
+      };
+    }
+
+    // if there is no data
+    return {
+      products: [],
+      next: null,
+      previous: null,
+      hasNext: false,
+      hasPrevious: false,
+    };
+  }
 
   findProduct = async (param: string) => {
     return await Product.findOne({

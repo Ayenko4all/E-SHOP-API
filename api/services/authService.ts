@@ -1,19 +1,20 @@
-import { Request, Response } from "express";
-import { hash, compare } from "bcrypt";
-import response from "../controllers/apiController";
-import UserRepository from "../Respositories/userRespository";
-import { StatusCode } from "../helpers/statusCode";
+import { Request, Response } from 'express';
+import { hash, compare } from 'bcrypt';
+import response from '../controllers/apiController';
+import UserRepository from '../Respositories/userRespository';
+import { StatusCode } from '../helpers/statusCode';
 import {
   generateVerificationToken,
   generateAccessToken,
-} from "../helpers/tokenHelper";
-import { Token } from "../models/tokenModel";
-import { sendWelcomeNotification } from "../helpers/mailer";
-import { defaultRoles } from "../helpers/defaultRole";
-import RoleRepository from "../Respositories/roleRespository";
-import moment from "moment";
-import { checkTokenExpiration } from "../helpers/checkIfTokenHasExpires";
-import { validationResult } from "express-validator";
+} from '../helpers/tokenHelper';
+import { Token } from '../models/tokenModel';
+import { sendWelcomeNotification } from '../helpers/mailer';
+import { defaultRoles } from '../helpers/defaultRole';
+import RoleRepository from '../Respositories/roleRespository';
+import moment from 'moment';
+import { checkTokenExpiration } from '../helpers/checkIfTokenHasExpires';
+import { validationResult } from 'express-validator';
+import { Role } from '../models/roleModel';
 
 class AuthService {
   public async createUser(req: Request, res: Response) {
@@ -49,14 +50,14 @@ class AuthService {
 
       user = await UserRepository.create(userRequest);
 
-      const reason = "verification";
+      const reason = 'verification';
 
-      await generateVerificationToken(userRequest.email, "email", reason);
+      await generateVerificationToken(userRequest.email, 'email', reason);
 
       sendWelcomeNotification(user);
 
       const message =
-        "Registration successfully. Please check your email for a verification token";
+        'Registration successfully. Please check your email for a verification token';
 
       return response.created(res, user, message);
     } catch (error: any) {
@@ -85,7 +86,7 @@ class AuthService {
       if (!user) {
         return response.error(
           res,
-          "Invalid credentials.",
+          'Invalid credentials.',
           StatusCode.UNPROCCESSED_ENTITY
         );
       }
@@ -93,7 +94,7 @@ class AuthService {
       if (!user.email_verified_at) {
         return response.error(
           res,
-          "Please verify your email address.",
+          'Please verify your email address.',
           StatusCode.UNPROCCESSED_ENTITY
         );
       }
@@ -108,19 +109,19 @@ class AuthService {
       if (!checkPassword) {
         return response.error(
           res,
-          "Invalid credentials.",
+          'Invalid credentials.',
           StatusCode.UNPROCCESSED_ENTITY
         );
       }
 
       const token = await generateAccessToken(user);
 
-      const userRoles = await user.populate("roles", "name");
+      const userRoles = await user.populate('roles', 'name');
 
       return response.created(
         res,
         { roles: userRoles.roles, token: token },
-        "Access token created successfully."
+        'Access token created successfully.'
       );
     } catch (error: any) {
       console.log(error);
@@ -143,7 +144,7 @@ class AuthService {
       const email = req.body.email;
       const telephone = req.body.telephone;
       const type = req.body.type;
-      const reason = "password";
+      const reason = 'password';
 
       const requestValue = telephone ?? email;
 
@@ -152,14 +153,14 @@ class AuthService {
       if (!user) {
         return response.error(
           res,
-          "Invalid email or telephone provided.",
+          'Invalid email or telephone provided.',
           StatusCode.UNPROCCESSED_ENTITY
         );
       }
 
       await generateVerificationToken(requestValue, type, reason);
 
-      return response.Ok(res, "Token sent to your registered email.");
+      return response.Ok(res, 'Token sent to your registered email.');
     } catch (error: any) {
       return response.error(res, error.message);
     }
@@ -196,7 +197,7 @@ class AuthService {
 
       await Token.findByIdAndDelete(token._id);
 
-      return response.Ok(res, "Your password was updated successfully.");
+      return response.Ok(res, 'Your password was updated successfully.');
     } catch (error: any) {
       return response.error(res, error.message);
     }
@@ -217,7 +218,7 @@ class AuthService {
       const email = req.body.email;
       const telephone = req.body.telephone;
       const type = req.body.type;
-      const reason = "verification";
+      const reason = 'verification';
 
       const requestValue = telephone ?? email;
 
@@ -226,7 +227,7 @@ class AuthService {
       if (!user) {
         return response.error(
           res,
-          "Invalid email or telephone provided.",
+          'Invalid email or telephone provided.',
           StatusCode.UNPROCCESSED_ENTITY
         );
       }
@@ -279,7 +280,7 @@ class AuthService {
 
       await Token.findByIdAndDelete(token._id);
 
-      return response.Ok(res, "Token verifed successfully.");
+      return response.Ok(res, 'Token verifed successfully.');
     } catch (error: any) {
       return response.error(res, error.message);
     }

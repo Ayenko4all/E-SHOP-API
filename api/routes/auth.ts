@@ -1,35 +1,35 @@
-import { Router } from "express";
+import { Router } from 'express';
 
-import authController from "../controllers/user/authController";
+import authController from '../controllers/user/authController';
 import {
   loginValidator,
   tokenRequestValidator,
   registerValidator,
   resetPasswordValidator,
   verificationValidator,
-} from "../validationHandler/authRequestValidator";
+} from '../validationHandler/authRequestValidator';
 
 const router = Router();
 
-router.post("/register", registerValidator, authController.register);
-router.post("/login", loginValidator, authController.login);
+router.post('/register', registerValidator, authController.register);
+router.post('/login', loginValidator, authController.login);
 router.post(
-  "/forgotPassword",
+  '/forgotPassword',
   tokenRequestValidator,
   authController.forgotPassword
 );
 router.post(
-  "/resetPassord",
+  '/resetPassord',
   resetPasswordValidator,
   authController.resetPassword
 );
 router.post(
-  "/requestToken",
+  '/requestToken',
   tokenRequestValidator,
   authController.requestVerificationToken
 );
 router.post(
-  "/verifyToken",
+  '/verifyToken',
   verificationValidator,
   authController.tokenVerification
 );

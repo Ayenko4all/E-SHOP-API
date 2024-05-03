@@ -1,6 +1,6 @@
-import { Schema, model, Model } from "mongoose";
-import { IUser } from "./userModel";
-import { ICategory } from "./categoryModel";
+import { Schema, model, Model } from 'mongoose';
+import { IUser } from './userModel';
+import { ICategory } from './categoryModel';
 
 export interface IProduct {
   _id: Schema.Types.ObjectId;
@@ -14,7 +14,7 @@ export interface IProduct {
   quantity: number;
 }
 
-const MongoPaging = require("mongo-cursor-pagination");
+const MongoPaging = require('mongo-cursor-pagination');
 
 const ProductSchema = new Schema(
   {
@@ -30,7 +30,7 @@ const ProductSchema = new Schema(
 
     category: {
       type: Schema.Types.ObjectId,
-      ref: "category",
+      ref: 'category',
       required: true,
     },
 
@@ -53,7 +53,7 @@ const ProductSchema = new Schema(
 
     creator: {
       type: Schema.Types.ObjectId,
-      ref: "User",
+      ref: 'User',
       required: true,
     },
 
@@ -68,7 +68,4 @@ const ProductSchema = new Schema(
 
 ProductSchema.plugin(MongoPaging.mongoosePlugin);
 
-export const Product: Model<IProduct> = model<IProduct>(
-  "Product",
-  ProductSchema
-);
+export const Product = model<IProduct>('Product', ProductSchema);
