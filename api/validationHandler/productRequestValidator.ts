@@ -1,12 +1,17 @@
 import { body, check } from "express-validator";
-import { isNumber } from "util";
+import productRespository from "../Respositories/productRespository";
 
 export const createProductValidator = [
-  body("name")
+  body("name", "Please enter a valid product name.")
     .isString()
     .isLength({ min: 3 })
     .trim()
-    .withMessage("Please enter a valid product name."),
+    .custom(async (value) => {
+      const product = await productRespository.findProduct(value);
+      if (product) {
+        throw new Error("Product already exist");
+      }
+    }),
   body("price")
     .isFloat({ gt: 0 })
     .withMessage("Please enter a valid product price."),
@@ -17,5 +22,34 @@ export const createProductValidator = [
   body("quantity")
     .isInt({ gt: 0 })
     .withMessage("Please enter a valid product quantity."),
-  body("price").isNumeric().withMessage("Please enter a valid product price."),
+  body("status")
+    .optional()
+    .isBoolean()
+    .withMessage("Please enter a valid status."),
+];
+
+export const createSkuRequest = [
+  body("product_id", "Please enter a valid product id.")
+    .notEmpty()
+    .custom(async (value) => {
+      const product = await productRespository.findProduct(value);
+      if (!product) {
+        throw new Error("Product id does not exist");
+      }
+    }),
+  body("attribute_option_id", "Please enter a valid attribute option id.")
+    .notEmpty()
+    .custom(async (value) => {
+      const attributeOption =
+        await productRespository.findAttributeOption(value);
+      if (!attributeOption) {
+        throw new Error("Product attribute option does not exist");
+      }
+    }),
+  body("price")
+    .isFloat({ gt: 0 })
+    .withMessage("Please enter a valid product price."),
+  body("stock")
+    .isInt({ gt: 0 })
+    .withMessage("Please enter a valid product stock."),
 ];

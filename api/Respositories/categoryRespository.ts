@@ -1,13 +1,17 @@
 import { Request, Response, NextFunction } from "express";
 import { Category } from "../models/categoryModel";
+import { paginateDocument, queryDocument } from "../helpers/paginator";
+import productRespository from "./productRespository";
 
 class CategoryRespository {
   create = async (category: object) => {
     return await Category.create(category);
   };
 
-  findCategories = async () => {
-    return await Category.find().exec();
+  findCategories = async (req: any) => {
+    const paginateDocs = paginateDocument(req, "category");
+    const query = queryDocument(req);
+    return await Category.paginate(query, paginateDocs);
   };
 
   findCategory = async (param: string) => {
@@ -38,9 +42,9 @@ class CategoryRespository {
     }
 
     const findChildCategory = await this.findChildCategory(id);
-    //const products = await this.findChildCategory(id);
+    const products = await this.findCategoryProducts(id);
 
-    if (findChildCategory) {
+    if (findChildCategory || products) {
       return false;
     }
 
@@ -49,6 +53,10 @@ class CategoryRespository {
 
   deleteCategory = async (id: string) => {
     return await Category.findByIdAndDelete(id).exec();
+  };
+
+  findCategoryProducts = async (id: string) => {
+    return await productRespository.findProduct(id);
   };
 }
 

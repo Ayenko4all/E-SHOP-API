@@ -1,6 +1,11 @@
 import { Request, Response, NextFunction } from "express";
 import { Category } from "../models/categoryModel";
 import { Product } from "../models/productModel";
+import { paginateDocument, queryDocument } from "../helpers/paginator";
+import { ProductAttribute } from "../models/productAttribute";
+import { ProductAttributeOption } from "../models/productAttributeOption";
+import { ProductSku } from "../models/productSku";
+import { ProductAttributeOptionSku } from "../models/ProductAttributeOptionSku";
 
 class ProductRespository {
   create = async (product: object) => {
@@ -8,14 +13,10 @@ class ProductRespository {
   };
 
   findProducts = async (req: any) => {
-    const next = req.query.next;
-    const previous = req.query.previous;
+    const paginateDocs = paginateDocument(req, "product");
+    const query = queryDocument(req);
 
-    return await Product.paginate({
-      limit: 2,
-      next: next,
-      previous: previous,
-    });
+    return await Product.paginate(query, paginateDocs);
   };
 
   findProduct = async (param: string) => {
@@ -25,7 +26,7 @@ class ProductRespository {
   };
 
   findById = async (id: string) => {
-    return await Product.findById(id).exec();
+    return await Product.findById(id).populate("category", "name");
   };
 
   findChildCategory = async (id: string) => {
@@ -57,6 +58,28 @@ class ProductRespository {
 
   deleteProduct = async (id: string) => {
     return await Category.findByIdAndDelete(id).exec();
+  };
+
+  createAttribute = async (attributes: object) => {
+    return await ProductAttribute.create(attributes);
+  };
+
+  createAttributeOption = async (attributeOptions: object) => {
+    return await ProductAttributeOption.create(attributeOptions);
+  };
+
+  createProductSku = async (sku: object) => {
+    return await ProductSku.create(sku);
+  };
+
+  linkAttributeToSku = async (data: object) => {
+    return await ProductAttributeOptionSku.create(data);
+  };
+
+  findAttributeOption = async (param: string) => {
+    return await ProductAttributeOption.findOne({
+      $or: [{ _id: param }, { name: param }],
+    }).exec();
   };
 }
 

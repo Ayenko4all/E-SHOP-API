@@ -53,6 +53,10 @@ app.use("/v1", (req: Request, res: Response, next: NextFunction) => {
 
 const BaseUrl: any = process.env.MONGO_URL;
 
-connect(BaseUrl);
+connect(BaseUrl)
+  .then((connection) =>
+    console.log(" connect with mongoDB server on ", connection.connection.host)
+  )
+  .catch((error) => console.error(error));
 
 export default app;

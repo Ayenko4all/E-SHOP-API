@@ -53,7 +53,7 @@ export const generateVerificationToken = async (
 export const generateAccessToken = async (user: IUser): Promise<string> => {
   deleteAccessToken(user);
   const secret: any = process.env.JWT_KEY;
-  const token = jwt.sign({ user }, secret, { expiresIn: "1h" });
+  const token = jwt.sign({ user }, secret, { expiresIn: "5h" });
   storeAccessToken(token, user);
   return token;
 };
@@ -77,4 +77,15 @@ export const verifyToken = async (
   return await AccessToken.findOne({ user: user._id, token: token })
     .lean<IAccessToken>()
     .exec();
+};
+
+export const generateAlphanumericString = async (
+  length: number
+): Promise<string> => {
+  let characters =
+    "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  let result = "";
+  for (let i = length; i > 0; --i)
+    result += characters[Math.round(Math.random() * (characters.length - 1))];
+  return result.toUpperCase();
 };

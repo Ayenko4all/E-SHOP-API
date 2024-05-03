@@ -21,6 +21,18 @@ class ProductController {
   destroy = async (req: Request, res: Response) => {
     productService.deleteProduct(req, res);
   };
+
+  storeattribute = async (req: Request, res: Response) => {
+    productService.createAttribute(req, res);
+  };
+
+  storeAtttributeOption = async (req: Request, res: Response) => {
+    productService.createAttributeOption(req, res);
+  };
+
+  storeProductSku = async (req: Request, res: Response) => {
+    productService.createProductSku(req, res);
+  };
 }
 
 export default new ProductController();

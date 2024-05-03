@@ -1,11 +1,10 @@
 import { Schema, model, Model, Document, PaginateModel, Types } from "mongoose";
 import { IUser } from "./userModel";
 import { ICategory } from "./categoryModel";
-//import { mongoosePagination, Pagination } from "mongoose-paginate-ts";
 import paginate from "mongoose-paginate-v2";
 
 export interface IProduct extends Document {
-  _id: Types.ObjectId;
+  _id: Schema.Types.ObjectId;
   name: string;
   description?: string;
   category: ICategory;
@@ -15,8 +14,6 @@ export interface IProduct extends Document {
   selling_price: number;
   quantity: number;
 }
-
-const MongoPaging = require("mongo-cursor-pagination");
 
 const ProductSchema = new Schema<IProduct>(
   {
@@ -32,7 +29,7 @@ const ProductSchema = new Schema<IProduct>(
 
     category: {
       type: Schema.Types.ObjectId,
-      ref: "category",
+      ref: "Category",
       required: true,
     },
 
@@ -68,23 +65,7 @@ const ProductSchema = new Schema<IProduct>(
   { timestamps: true }
 );
 
-//ProductSchema.plugin(mongoosePagination);
-
-//productSchema.plugin(MongoPaging.mongoosePlugin);
-
-// export const Product: Pagination<IProduct> = model<
-//   IProduct,
-//   Pagination<IProduct>
-// >("Product", ProductSchema);
-
-ProductSchema.plugin(MongoPaging.mongoosePlugin);
-
-// export const Product: Model<IProduct> = model<IProduct>(
-//   "Product",
-//   ProductSchema
-// );
-
-//ProductSchema.plugin(paginate);
+ProductSchema.plugin(paginate);
 
 export const Product: PaginateModel<IProduct> = model<
   IProduct,

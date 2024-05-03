@@ -1,8 +1,9 @@
-import { Schema, model, Model } from "mongoose";
+import { Schema, model, Model, Document, PaginateModel } from "mongoose";
+import paginate from "mongoose-paginate-v2";
 
 import { IUser } from "./userModel";
 
-export interface ICategory {
+export interface ICategory extends Document {
   _id: Schema.Types.ObjectId;
   name: string;
   description?: string;
@@ -29,12 +30,6 @@ const CategorySchema = new Schema<ICategory>(
       default: null,
     },
 
-    // price: {
-    //   type: Number,
-    //   default: 0,
-    //   required: true,
-    // },
-
     creator: {
       type: Schema.Types.ObjectId,
       ref: "User",
@@ -50,7 +45,9 @@ const CategorySchema = new Schema<ICategory>(
   { timestamps: true }
 );
 
-export const Category: Model<ICategory> = model<ICategory>(
-  "Category",
-  CategorySchema
-);
+CategorySchema.plugin(paginate);
+
+export const Category: PaginateModel<ICategory> = model<
+  ICategory,
+  PaginateModel<ICategory>
+>("Category", CategorySchema);

@@ -49,7 +49,7 @@ class categoryService {
     res: Response
   ): Promise<Response> {
     try {
-      const categories = await categoryRespository.findCategories();
+      const categories = await categoryRespository.findCategories(req);
 
       return response.respond(
         res,
