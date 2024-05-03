@@ -5,11 +5,12 @@ import productRespository from "../Respositories/productRespository";
 import { IProduct, Product } from "../models/productModel";
 import { validationResult } from "express-validator";
 import { StatusCode } from "../helpers/statusCode";
+import { Types } from "mongoose";
 
 class ProductService {
   public async fetchProducts(req: Request, res: Response): Promise<Response> {
     try {
-      const products = await productRespository.findProducts();
+      const products = await productRespository.findProducts(req);
 
       return response.respond(
         res,

@@ -7,9 +7,15 @@ class ProductRespository {
     return await Product.create(product);
   };
 
-  findProducts = async () => {
-    return await Product.find().exec();
-    //return await Product.paginate({ limit: 2 });
+  findProducts = async (req: any) => {
+    const next = req.query.next;
+    const previous = req.query.previous;
+
+    return await Product.paginate({
+      limit: 2,
+      next: next,
+      previous: previous,
+    });
   };
 
   findProduct = async (param: string) => {
