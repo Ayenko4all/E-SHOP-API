@@ -1,17 +1,17 @@
 import { Request, Response } from "express";
-import response from "../controllers/apiController";
-import { IUser } from "../models/userModel";
-import productRespository from "../Respositories/productRespository";
-import { IProduct, Product } from "../models/productModel";
+import response from "../../controllers/apiController";
+import { IUser } from "../../models/userModel";
+import productRespository from "../../Respositories/productRespository";
+import { IProduct, Product } from "../../models/productModel";
 import { validationResult } from "express-validator";
-import { StatusCode } from "../helpers/statusCode";
+import { StatusCode } from "../../helpers/statusCode";
 import { Types } from "mongoose";
-import { generateAlphanumericString } from "../helpers/tokenHelper";
+import { generateAlphanumericString } from "../../helpers/tokenHelper";
 
 class ProductService {
   public async fetchProducts(req: Request, res: Response): Promise<Response> {
     try {
-      const products = await productRespository.findProducts(req);
+      const products = await productRespository.findPaginatedProducts(req);
 
       return response.respond(res, products, "Products fetch successfully.");
     } catch (error: any) {
@@ -44,6 +44,7 @@ class ProductService {
         quantity: req.body.quantity,
         category: req.body.category,
         creator: user._id,
+        brand: req.body.brand,
       };
 
       const product = await productRespository.create(productRequest);
@@ -108,47 +109,6 @@ class ProductService {
 
   public async createAttribute(req: Request, res: Response): Promise<Response> {
     try {
-      const data = { name: req.body.name };
-      const attribute = await productRespository.createAttribute(data);
-      return response.created(
-        res,
-        { attribute: attribute },
-        "Product attribute was created."
-      );
-    } catch (error: any) {
-      console.log(error);
-      return response.error(res, error.message);
-    }
-  }
-
-  public async createAttributeOption(
-    req: Request,
-    res: Response
-  ): Promise<Response> {
-    try {
-      const attributeId = req.body.attribute_id;
-      const data = {
-        value: req.body.value,
-        attribute: attributeId,
-        code: generateAlphanumericString(8),
-      };
-      const attribute = await productRespository.createAttributeOption(data);
-      return response.created(
-        res,
-        { attribute: attribute },
-        "Product attribute was created."
-      );
-    } catch (error: any) {
-      console.log(error);
-      return response.error(res, error.message);
-    }
-  }
-
-  public async createProductSku(
-    req: Request,
-    res: Response
-  ): Promise<Response> {
-    try {
       const errors = validationResult(req);
 
       if (!errors.isEmpty()) {
@@ -163,6 +123,8 @@ class ProductService {
 
       const requestFiles: any = req.files;
 
+      console.log(requestFiles);
+
       for (let file of requestFiles) {
         files.push(file.path);
       }
@@ -174,21 +136,17 @@ class ProductService {
         stock: req.body.stock,
         code: await generateAlphanumericString(8),
         images: files,
+        color: req.body.color,
+        value: req.body.value,
+        name: req.body.name,
       };
 
-      const sku = await productRespository.createProductSku(data);
-
-      const linkData = {
-        attribute_option: req.body.attribute_option_id,
-        product_sku: sku._id,
-      };
-
-      await productRespository.linkAttributeToSku(linkData);
+      const productAttribute = await productRespository.createAttribute(data);
 
       return response.created(
         res,
-        { product_sku: sku },
-        "Product sku was created."
+        { product_attribute: productAttribute },
+        "Product attribute was created."
       );
     } catch (error: any) {
       console.log(error);

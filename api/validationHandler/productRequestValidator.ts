@@ -7,7 +7,7 @@ export const createProductValidator = [
     .isLength({ min: 3 })
     .trim()
     .custom(async (value) => {
-      const product = await productRespository.findProduct(value);
+      const product = await productRespository.findProductByName(value);
       if (product) {
         throw new Error("Product already exist");
       }
@@ -28,7 +28,7 @@ export const createProductValidator = [
     .withMessage("Please enter a valid status."),
 ];
 
-export const createSkuRequest = [
+export const createAttributeRequest = [
   body("product_id", "Please enter a valid product id.")
     .notEmpty()
     .custom(async (value) => {
@@ -37,15 +37,15 @@ export const createSkuRequest = [
         throw new Error("Product id does not exist");
       }
     }),
-  body("attribute_option_id", "Please enter a valid attribute option id.")
-    .notEmpty()
-    .custom(async (value) => {
-      const attributeOption =
-        await productRespository.findAttributeOption(value);
-      if (!attributeOption) {
-        throw new Error("Product attribute option does not exist");
-      }
-    }),
+  // body("attribute_option_id", "Please enter a valid attribute option id.")
+  //   .notEmpty()
+  //   .custom(async (value) => {
+  //     const attributeOption =
+  //       await productRespository.findAttributeOption(value);
+  //     if (!attributeOption) {
+  //       throw new Error("Product attribute option does not exist");
+  //     }
+  //   }),
   body("price")
     .isFloat({ gt: 0 })
     .withMessage("Please enter a valid product price."),

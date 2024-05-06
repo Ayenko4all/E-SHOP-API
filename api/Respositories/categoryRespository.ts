@@ -9,6 +9,11 @@ class CategoryRespository {
   };
 
   findCategories = async (req: any) => {
+    const query = queryDocument(req);
+    return await Category.find(query);
+  };
+
+  findPaginatedCategories = async (req: any) => {
     const paginateDocs = paginateDocument(req, "category");
     const query = queryDocument(req);
     return await Category.paginate(query, paginateDocs);
@@ -22,6 +27,10 @@ class CategoryRespository {
 
   findById = async (id: string) => {
     return await Category.findById(id).exec();
+  };
+
+  findByName = async (name: string) => {
+    return await Category.findOne({ name: name }).exec();
   };
 
   findChildCategory = async (id: string) => {

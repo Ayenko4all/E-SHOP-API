@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import productService from "../../services/productService";
+import productService from "../../services/product/admiProductService";
 
 class ProductController {
   index = async (req: Request, res: Response) => {
@@ -22,16 +22,12 @@ class ProductController {
     productService.deleteProduct(req, res);
   };
 
-  storeattribute = async (req: Request, res: Response) => {
+  storeAttribute = async (req: Request, res: Response) => {
     productService.createAttribute(req, res);
   };
 
-  storeAtttributeOption = async (req: Request, res: Response) => {
-    productService.createAttributeOption(req, res);
-  };
-
-  storeProductSku = async (req: Request, res: Response) => {
-    productService.createProductSku(req, res);
+  storeImage = async (req: Request, res: Response) => {
+    productService.createAttribute(req, res);
   };
 }
 

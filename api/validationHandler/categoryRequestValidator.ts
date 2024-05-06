@@ -7,7 +7,7 @@ export const createValidator = [
     .isLength({ min: 3 })
     .trim()
     .custom(async (value) => {
-      const cat = await categoryRespository.findCategory(value);
+      const cat = await categoryRespository.findByName(value);
       if (cat) {
         throw new Error("Category already exist");
       }

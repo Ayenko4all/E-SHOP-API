@@ -2,9 +2,10 @@ import { Schema, model, Model, Document, PaginateModel, Types } from "mongoose";
 import { IUser } from "./userModel";
 import { ICategory } from "./categoryModel";
 import paginate from "mongoose-paginate-v2";
+import { IProductAttribute } from "./productAttributeModel";
+import { IBrand } from "./brandModel";
 
 export interface IProduct extends Document {
-  _id: Schema.Types.ObjectId;
   name: string;
   description?: string;
   category: ICategory;
@@ -13,6 +14,9 @@ export interface IProduct extends Document {
   price: number;
   selling_price: number;
   quantity: number;
+  is_fetaured: string;
+  attributes?: IProductAttribute;
+  brand?: IBrand;
 }
 
 const ProductSchema = new Schema<IProduct>(
@@ -56,11 +60,29 @@ const ProductSchema = new Schema<IProduct>(
       required: true,
     },
 
+    is_fetaured: {
+      type: String,
+      default: "No",
+      required: false,
+    },
+
+    brand: {
+      type: Types.ObjectId,
+      default: null,
+      ref: "Brand",
+    },
     status: {
       type: Boolean,
       default: true,
       required: true,
     },
+    attributes: [
+      {
+        type: Types.ObjectId,
+        ref: "ProductAttribute",
+        default: null,
+      },
+    ],
   },
   { timestamps: true }
 );

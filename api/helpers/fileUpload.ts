@@ -1,4 +1,5 @@
 import multer, { diskStorage } from "multer";
+import response from "../controllers/apiController";
 
 const storage = diskStorage({
   destination: function (req: any, file: any, cb: any) {
@@ -9,18 +10,21 @@ const storage = diskStorage({
   },
 });
 
-const fileFilter = (req: any, file: any, cb: any) => {
+const checkFileType = (file: any, cb: any) => {
   if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
-    cb(null, true);
+    return cb(null, true);
   } else {
-    cb(null, false);
+    cb(new Error("only jpeg and png files are allowed!"), false);
   }
 };
 
 const upload = multer({
   storage: storage,
   limits: { fileSize: 1024 * 1024 * 5 },
-  fileFilter: fileFilter,
+  //fileFilter: fileFilter,
+  fileFilter(req: any, file: any, cb: any) {
+    checkFileType(file, cb);
+  },
 });
 
 export default upload;

@@ -1,22 +1,45 @@
-import { Request, Response, NextFunction } from "express";
+import e, { Request, Response, NextFunction } from "express";
 import { Category } from "../models/categoryModel";
-import { Product } from "../models/productModel";
+import { IProduct, Product } from "../models/productModel";
 import { paginateDocument, queryDocument } from "../helpers/paginator";
-import { ProductAttribute } from "../models/productAttribute";
-import { ProductAttributeOption } from "../models/productAttributeOption";
-import { ProductSku } from "../models/productSku";
-import { ProductAttributeOptionSku } from "../models/ProductAttributeOptionSku";
+import {
+  IProductAttribute,
+  ProductAttribute,
+} from "../models/productAttributeModel";
 
 class ProductRespository {
   create = async (product: object) => {
     return await Product.create(product);
   };
 
-  findProducts = async (req: any) => {
+  findPaginatedProducts = async (req: any) => {
+    console.log(req.query);
+
     const paginateDocs = paginateDocument(req, "product");
     const query = queryDocument(req);
 
     return await Product.paginate(query, paginateDocs);
+  };
+
+  findProducts = async (req: any) => {
+    const query = queryDocument(req);
+
+    return await Product.find(query);
+  };
+
+  findFeaturedProducts = async (req: any) => {
+    return await Product.aggregate([
+      { $match: { is_fetaured: "Yes", status: true } },
+    ])
+      .limit(5)
+      .exec();
+  };
+
+  findNewProducts = async (req: any) => {
+    return await Product.find({ status: true })
+      .sort("createdAt")
+      .limit(5)
+      .exec();
   };
 
   findProduct = async (param: string) => {
@@ -25,12 +48,18 @@ class ProductRespository {
     }).exec();
   };
 
-  findById = async (id: string) => {
-    return await Product.findById(id).populate("category", "name");
+  findProductByName = async (param: string) => {
+    return await Product.findOne({ name: param }).exec();
   };
 
-  findChildCategory = async (id: string) => {
-    return await Category.find({ parent: id }).exec();
+  findById = async (id: string) => {
+    return await Product.findById(id)
+      .populate({
+        path: "category",
+        select: "name",
+      })
+      .populate("brand", "name")
+      .populate("attributes");
   };
 
   updateProduct = async (condition: object, data: object) => {
@@ -46,13 +75,6 @@ class ProductRespository {
       return false;
     }
 
-    const findChildCategory = await this.findChildCategory(id);
-    //const products = await this.findChildCategory(id);
-
-    if (findChildCategory) {
-      return false;
-    }
-
     return true;
   };
 
@@ -61,25 +83,25 @@ class ProductRespository {
   };
 
   createAttribute = async (attributes: object) => {
-    return await ProductAttribute.create(attributes);
+    const attribute: any = await ProductAttribute.create(attributes);
+    await Product.updateOne(
+      { _id: attribute.product },
+      { $push: { attributes: attribute._id } }
+    );
+
+    return attribute;
   };
 
-  createAttributeOption = async (attributeOptions: object) => {
-    return await ProductAttributeOption.create(attributeOptions);
+  findBrandProducts = async (brandId: string) => {
+    return await Product.find({ brand: brandId });
   };
 
-  createProductSku = async (sku: object) => {
-    return await ProductSku.create(sku);
-  };
+  findProductAndItAssociates = async (param: string) => {
+    let product: IProduct = (await this.findById(param)) as IProduct;
 
-  linkAttributeToSku = async (data: object) => {
-    return await ProductAttributeOptionSku.create(data);
-  };
+    const data = {};
 
-  findAttributeOption = async (param: string) => {
-    return await ProductAttributeOption.findOne({
-      $or: [{ _id: param }, { name: param }],
-    }).exec();
+    return data;
   };
 }
 
