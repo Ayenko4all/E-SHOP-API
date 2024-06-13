@@ -123,8 +123,6 @@ class ProductService {
 
       const requestFiles: any = req.files;
 
-      console.log(requestFiles);
-
       for (let file of requestFiles) {
         files.push(file.path);
       }

@@ -4,8 +4,16 @@ import { paginateDocument, queryDocument } from "../helpers/paginator";
 import productRespository from "./productRespository";
 
 class CategoryRespository {
-  create = async (category: object) => {
-    return await Category.create(category);
+  create = async (data: object) => {
+    const category = await Category.create(data);
+    if (category.parent) {
+      await Category.updateOne(
+        { _id: category.parent },
+        { $push: { children: category._id } }
+      );
+    }
+
+    return category;
   };
 
   findCategories = async (req: any) => {

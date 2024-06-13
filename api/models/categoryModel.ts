@@ -10,6 +10,7 @@ export interface ICategory extends Document {
   parent?: ICategory;
   creator?: IUser;
   status: boolean;
+  children?: ICategory;
 }
 
 const CategorySchema = new Schema<ICategory>(
@@ -24,6 +25,14 @@ const CategorySchema = new Schema<ICategory>(
       ref: "category",
       default: null,
     },
+
+    children: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "category",
+        default: null,
+      },
+    ],
 
     description: {
       type: String,

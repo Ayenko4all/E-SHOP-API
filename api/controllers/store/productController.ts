@@ -9,6 +9,10 @@ class ProductController {
   fetchProduct = async (req: Request, res: Response) => {
     productService.fetchProduct(req, res);
   };
+
+  productListing = async (req: Request, res: Response) => {
+    productService.productListing(req, res);
+  };
 }
 
 export default new ProductController();
